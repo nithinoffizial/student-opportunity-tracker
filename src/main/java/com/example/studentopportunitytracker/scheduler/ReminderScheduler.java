@@ -1,0 +1,54 @@
+package com.example.studentopportunitytracker.scheduler;
+
+import com.example.studentopportunitytracker.entity.Application;
+import com.example.studentopportunitytracker.entity.Reminder;
+import com.example.studentopportunitytracker.service.EmailService;
+import com.example.studentopportunitytracker.service.ReminderService;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+@Component
+public class ReminderScheduler {
+
+    private final ReminderService reminderService;
+    private final EmailService emailService;
+
+    public ReminderScheduler(
+            ReminderService reminderService,
+            EmailService emailService) {
+        this.reminderService = reminderService;
+        this.emailService = emailService;
+    }
+
+    @Scheduled(cron = "0 0 9 * * *")
+    public void sendDailyReminders() {
+
+        List<Reminder> reminders = reminderService.getTodayReminders();
+
+        for (Reminder reminder : reminders) {
+
+            Application application = reminder.getApplication();
+
+            String email = application.getStudent().getEmail();
+
+            String opportunityTitle =
+                    application.getOpportunity().getTitle();
+
+            String subject = "Opportunity Reminder: " + opportunityTitle;
+
+            String message =
+                    "Hello " + application.getStudent().getName() + ",\n\n"
+                    + "This is a reminder about your opportunity:\n\n"
+                    + opportunityTitle + "\n"
+                    + "Company: " + application.getOpportunity().getCompany() + "\n"
+                    + "Deadline: " + application.getOpportunity().getDeadline() + "\n\n"
+                    + "Please check the opportunity and take the necessary action.\n\n"
+                    + "Student Opportunity Tracker";
+
+            emailService.sendReminderEmail(email, subject, message);
+
+            reminderService.markAsSent(reminder);
+        }
+    }
+}
