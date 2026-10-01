@@ -1,13 +1,17 @@
 package com.example.studentopportunitytracker.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Opportunity {
@@ -33,6 +37,10 @@ public class Opportunity {
 
     @NotBlank(message = "Registration link is required")
     private String registrationLink;
+
+    @OneToMany(mappedBy = "opportunity")
+    @JsonIgnore
+    private List<Application> applications = new ArrayList<>();
 
     public Opportunity() {
     }
@@ -91,5 +99,13 @@ public class Opportunity {
 
     public void setRegistrationLink(String registrationLink) {
         this.registrationLink = registrationLink;
+    }
+
+    public List<Application> getApplications() {
+        return applications;
+    }
+
+    public void setApplications(List<Application> applications) {
+        this.applications = applications;
     }
 }

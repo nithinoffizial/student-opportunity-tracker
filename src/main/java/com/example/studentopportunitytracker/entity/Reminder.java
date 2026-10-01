@@ -1,6 +1,11 @@
 package com.example.studentopportunitytracker.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
@@ -11,9 +16,11 @@ public class Reminder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Application is required")
     @ManyToOne
     private Application application;
 
+    @NotNull(message = "Reminder date is required")
     private LocalDate reminderDate;
 
     private boolean sent;

@@ -1,15 +1,19 @@
 package com.example.studentopportunitytracker.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Application {
@@ -20,7 +24,6 @@ public class Application {
 
     @NotNull(message = "Student is required")
     @ManyToOne
-    @JsonIgnore
     private Student student;
 
     @NotNull(message = "Opportunity is required")
@@ -34,6 +37,14 @@ public class Application {
     private LocalDate appliedDate;
 
     private String notes;
+
+    @OneToMany(
+            mappedBy = "application",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JsonIgnore
+    private List<Reminder> reminders = new ArrayList<>();
 
     public Application() {
     }
@@ -84,5 +95,13 @@ public class Application {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public List<Reminder> getReminders() {
+        return reminders;
+    }
+
+    public void setReminders(List<Reminder> reminders) {
+        this.reminders = reminders;
     }
 }
